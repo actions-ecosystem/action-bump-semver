@@ -1,0 +1,20 @@
+name: Actions Ecosystem Bump Semver
+description: Bump a semver version up.
+author: The Actions Ecosystem Authors
+inputs:
+  current_version:
+    description: The current version.
+    required: true
+  level:
+    description: A semver update level ({major, premajor, minor, preminor, patch, prepatch, prerelease}).
+    required: false
+    default: minor
+outputs:
+  new_version:
+    description: The bumped semver version.
+runs:
+  using: node12
+  main: dist/index.js
+branding:
+  icon: bookmark
+  color: white
