@@ -4,8 +4,6 @@
 [![release][release-badge]][release]
 [![license][license-badge]][license]
 
-![screenshot](./docs/assets/screenshot.png)
-
 This is a GitHub Action to bump the given semver version up.
 
 For example:
