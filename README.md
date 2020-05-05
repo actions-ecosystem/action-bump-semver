@@ -32,11 +32,12 @@ It would be more useful to use this with other GitHub Actions' outputs.
 ### Simple
 
 ```yaml
-name: Push a new tag with Pull Request
+name: Push a new tag with minor update
 
 on:
-  pull_request:
-    types: [closed]
+  push:
+    branches:
+      - master
 
 jobs:
   release:
@@ -44,23 +45,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions-ecosystem/action-release-label@v1
-        id: release-label
-        if: ${{ github.event.pull_request.merged == true }}
-
       - uses: actions-ecosystem/action-get-latest-tag@v1
         id: get-latest-tag
-        if: ${{ steps.release-label.outputs.level != null }}
 
       - uses: actions-ecosystem/action-bump-semver@v1
         id: bump-semver
-        if: ${{ steps.release-label.outputs.level != null }}
         with:
           current_version: ${{ steps.get-latest-tag.outputs.tag }}
-          level: ${{ steps.release-label.outputs.level }}
+          level: minor
 
       - uses: actions-ecosystem/action-push-tag@v1
-        if: ${{ steps.release-label.outputs.level != null }}
         with:
           tag: ${{ steps.bump-semver.outputs.new_version }}
           message: '${{ steps.bump-semver.outputs.new_version }}: PR #${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}'
