@@ -1114,7 +1114,8 @@ function run() {
         try {
             const currentVersion = core.getInput('current_version');
             const bumpLevel = core.getInput('level');
-            yield bumpSemver(currentVersion, bumpLevel);
+            const newVersion = yield bumpSemver(currentVersion, bumpLevel);
+            core.setOutput('new_version', newVersion);
         }
         catch (e) {
             core.error(e);
@@ -1127,19 +1128,18 @@ function bumpSemver(currentVersion, bumpLevel) {
         if (!semver.valid(currentVersion)) {
             throw new Error(`${currentVersion} is not a valid semver`);
         }
+        if (!isReleaseType(bumpLevel)) {
+            throw new Error(`${bumpLevel} is not supported. {major, premajor, minor, preminor, patch, prepatch, prerelease} is available.`);
+        }
         // https://semver.org/#is-v123-a-semantic-version
         // If the current version has 'v' prefix (e.g., v1.2.3), keep the prefix in the new version too.
         const hasVPrefix = currentVersion.startsWith('v');
-        if (isReleaseType(bumpLevel)) {
-            const newVersion = semver.inc(currentVersion, bumpLevel);
-            if (hasVPrefix) {
-                core.setOutput('new_version', `v${newVersion}`);
-                return;
-            }
-            core.setOutput('new_version', newVersion);
-            return;
+        const bumpedVersion = semver.inc(currentVersion, bumpLevel);
+        let newVersion = bumpedVersion;
+        if (hasVPrefix) {
+            newVersion = `v${newVersion}`;
         }
-        throw new Error(`${bumpLevel} is not supported. {major, premajor, minor, preminor, patch, prepatch, prerelease} is available.`);
+        return newVersion;
     });
 }
 function isReleaseType(s) {
