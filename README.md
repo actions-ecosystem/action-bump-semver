@@ -19,7 +19,7 @@ It would be more useful to use this with other GitHub Actions' outputs.
 |       NAME        |                                       DESCRIPTION                                        |   TYPE   | REQUIRED | DEFAULT |
 |-------------------|------------------------------------------------------------------------------------------|----------|----------|---------|
 | `current_version` | The current version.                                                                     | `string` | `true`   | `N/A`   |
-| `level`           | A semver update level ({major, premajor, minor, preminor, patch, prepatch, prerelease}). | `string` | `false`  | `minor` |
+| `level`           | A semver update level `{major, premajor, minor, preminor, patch, prepatch, prerelease}`. | `string` | `false`  | `minor` |
 
 ## Outputs
 
