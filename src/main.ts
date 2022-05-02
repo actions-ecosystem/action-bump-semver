@@ -16,7 +16,8 @@ async function run(): Promise<void> {
 
 async function bumpSemver(
   currentVersion: string,
-  bumpLevel: string
+  bumpLevel: string,
+  options: Array=[]
 ): Promise<string | null> {
   if (!semver.valid(currentVersion)) {
     throw new Error(`${currentVersion} is not a valid semver`);
@@ -31,8 +32,7 @@ async function bumpSemver(
   // https://semver.org/#is-v123-a-semantic-version
   // If the current version has 'v' prefix (e.g., v1.2.3), keep the prefix in the new version too.
   const hasVPrefix = currentVersion.startsWith('v');
-
-  const bumpedVersion = semver.inc(currentVersion, bumpLevel);
+  const bumpedVersion = semver.inc(currentVersion, bumpLevel, options);
 
   let newVersion = bumpedVersion;
   if (hasVPrefix) {
