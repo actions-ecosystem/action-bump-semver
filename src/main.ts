@@ -8,9 +8,13 @@ async function run(): Promise<void> {
 
     const newVersion = await bumpSemver(currentVersion, bumpLevel);
     core.setOutput('new_version', newVersion);
-  } catch (e) {
+  } catch (e: any) {
     core.error(e);
-    core.setFailed(e.message);
+    if (e instanceof Error) {
+      core.setFailed(e.message);
+    } else {
+      core.setFailed(e);
+    }
   }
 }
 
