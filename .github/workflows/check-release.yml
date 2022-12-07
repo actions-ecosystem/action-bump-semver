@@ -9,7 +9,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - uses: actions-ecosystem/action-release-label@v1
         id: release-label
@@ -21,7 +21,7 @@ jobs:
         with:
           semver_only: true
 
-      - uses: actions-ecosystem/action-bump-semver@v1
+      - uses: mgor/action-bump-semver@main
         id: bump-semver
         if: ${{ steps.release-label.outputs.level != null }}
         with:
