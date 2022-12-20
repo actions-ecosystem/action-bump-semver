@@ -13,7 +13,7 @@ outputs:
   new_version:
     description: The bumped semver version.
 runs:
-  using: node12
+  using: node16
   main: dist/index.js
 branding:
   icon: bookmark
