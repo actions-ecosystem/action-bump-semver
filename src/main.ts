@@ -1,5 +1,8 @@
+import * as fs from 'fs';
 import * as core from '@actions/core';
 import * as semver from 'semver';
+
+const GITHUB_OUTPUT = process.env.GITHUB_OUTPUT || '';
 
 async function run(): Promise<void> {
   try {
@@ -7,7 +10,7 @@ async function run(): Promise<void> {
     const bumpLevel = core.getInput('level');
 
     const newVersion = await bumpSemver(currentVersion, bumpLevel);
-    core.setOutput('new_version', newVersion);
+    fs.appendFileSync(GITHUB_OUTPUT, `new_version=${newVersion}\n`);
   } catch (e) {
     core.error(e);
     core.setFailed(e.message);
