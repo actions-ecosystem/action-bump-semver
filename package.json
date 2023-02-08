@@ -23,15 +23,16 @@
   "author": "The Actions Ecosystem Authors",
   "license": "Apache 2.0",
   "dependencies": {
-    "@actions/core": "^1.2.3",
-    "@actions/github": "^2.1.1",
+    "@actions/core": "^1.10.0",
+    "@actions/github": "^5.1.1",
     "@octokit/rest": "^16.43.1",
-    "semver": "^7.3.2"
+    "semver": "^7.3.2",
+    "yarn": "^1.22.19"
   },
   "devDependencies": {
     "@octokit/webhooks": "^7.6.2",
     "@types/jest": "^25.2.3",
-    "@types/node": "^14.0.10",
+    "@types/node": "^16.18.11",
     "@types/semver": "^7.1.0",
     "@typescript-eslint/parser": "^3.1.0",
     "@zeit/ncc": "^0.20.5",
@@ -44,6 +45,6 @@
     "js-yaml": "^3.14.0",
     "prettier": "^1.19.1",
     "ts-jest": "^24.2.0",
-    "typescript": "^3.9.3"
+    "typescript": "^4.9.5"
   }
 }
