@@ -1,4 +1,4 @@
-name: Actions Ecosystem Bump Semver
+name: Bump Semver
 description: Bump a semver version up.
 author: The Actions Ecosystem Authors
 inputs:
