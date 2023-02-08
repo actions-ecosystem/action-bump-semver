@@ -1,4 +1,4 @@
-name: Actions Ecosystem Bump Semver
+name: Bump Semver 2-2023 Working
 description: Bump a semver version up.
 author: The Actions Ecosystem Authors
 inputs:
@@ -13,7 +13,7 @@ outputs:
   new_version:
     description: The bumped semver version.
 runs:
-  using: node12
+  using: node16
   main: dist/index.js
 branding:
   icon: bookmark
