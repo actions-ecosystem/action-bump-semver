@@ -1,6 +1,6 @@
-name: Test
+name: yes teas menu 
 
-on: push
+on: finising 
 
 jobs:
   test:
