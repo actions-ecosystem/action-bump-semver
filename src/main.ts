@@ -3,14 +3,20 @@ import * as semver from 'semver';
 
 async function run(): Promise<void> {
   try {
-    const currentVersion = core.getInput('current_version');
-    const bumpLevel = core.getInput('level');
+    const currentVersion = core.getInput('current_version') as string;
+    const bumpLevel = core.getInput('level') as string;
 
     const newVersion = await bumpSemver(currentVersion, bumpLevel);
-    core.setOutput('new_version', newVersion);
+    if (newVersion) {
+      core.setOutput('new_version', newVersion);
+    } else {
+      core.setFailed('Failed to bump the version.');
+    }
   } catch (e) {
-    core.error(e);
-    core.setFailed(e.message);
+    if (e instanceof Error) {
+      core.error(e);
+      core.setFailed(e.message);
+    }
   }
 }
 
@@ -28,11 +34,9 @@ async function bumpSemver(
     );
   }
 
-  // https://semver.org/#is-v123-a-semantic-version
-  // If the current version has 'v' prefix (e.g., v1.2.3), keep the prefix in the new version too.
   const hasVPrefix = currentVersion.startsWith('v');
 
-  const bumpedVersion = semver.inc(currentVersion, bumpLevel);
+  const bumpedVersion = semver.inc(currentVersion, bumpLevel as semver.ReleaseType);
 
   let newVersion = bumpedVersion;
   if (hasVPrefix) {
