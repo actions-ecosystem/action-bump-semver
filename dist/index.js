@@ -46,7 +46,14 @@ function run() {
         try {
             const currentVersion = core.getInput('current_version');
             const bumpLevel = core.getInput('level');
-            const newVersion = yield bumpSemver(currentVersion, bumpLevel);
+            const preID = core.getInput('preID');
+            let newVersion;
+            if (preID) {
+                newVersion = yield bumpSemver(currentVersion, bumpLevel, preID);
+            }
+            else {
+                newVersion = yield bumpSemver(currentVersion, bumpLevel);
+            }
             if (newVersion) {
                 core.setOutput('new_version', newVersion);
             }
@@ -62,7 +69,7 @@ function run() {
         }
     });
 }
-function bumpSemver(currentVersion, bumpLevel) {
+function bumpSemver(currentVersion, bumpLevel, preID) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!semver.valid(currentVersion)) {
             throw new Error(`${currentVersion} is not a valid semver`);
@@ -71,7 +78,13 @@ function bumpSemver(currentVersion, bumpLevel) {
             throw new Error(`${bumpLevel} is not supported. {major, premajor, minor, preminor, patch, prepatch, prerelease} is available.`);
         }
         const hasVPrefix = currentVersion.startsWith('v');
-        const bumpedVersion = semver.inc(currentVersion, bumpLevel);
+        let bumpedVersion;
+        if (preID) {
+            bumpedVersion = semver.inc(currentVersion, bumpLevel, preID);
+        }
+        else {
+            bumpedVersion = semver.inc(currentVersion, bumpLevel);
+        }
         let newVersion = bumpedVersion;
         if (hasVPrefix) {
             newVersion = `v${newVersion}`;
@@ -80,15 +93,7 @@ function bumpSemver(currentVersion, bumpLevel) {
     });
 }
 function isReleaseType(s) {
-    return [
-        'major',
-        'premajor',
-        'minor',
-        'preminor',
-        'patch',
-        'prepatch',
-        'prerelease'
-    ].includes(s);
+    return ['major', 'premajor', 'minor', 'preminor', 'patch', 'prepatch', 'prerelease'].includes(s);
 }
 run();
 

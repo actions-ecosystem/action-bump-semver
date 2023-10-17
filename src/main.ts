@@ -4,9 +4,17 @@ import * as semver from 'semver';
 async function run(): Promise<void> {
   try {
     const currentVersion = core.getInput('current_version') as string;
-    const bumpLevel = core.getInput('level') as string;
+    const bumpLevel = core.getInput('level') as semver.ReleaseType;
+    const preID = core.getInput('preID') as string;
 
-    const newVersion = await bumpSemver(currentVersion, bumpLevel);
+    let newVersion;
+
+    if (preID) {
+      newVersion = await bumpSemver(currentVersion, bumpLevel, preID);
+    } else {
+      newVersion = await bumpSemver(currentVersion, bumpLevel);
+    }
+
     if (newVersion) {
       core.setOutput('new_version', newVersion);
     } else {
@@ -22,8 +30,9 @@ async function run(): Promise<void> {
 
 async function bumpSemver(
   currentVersion: string,
-  bumpLevel: string
-): Promise<string | null> {
+  bumpLevel: semver.ReleaseType,
+  preID?: string
+): Promise<string> {
   if (!semver.valid(currentVersion)) {
     throw new Error(`${currentVersion} is not a valid semver`);
   }
@@ -36,7 +45,12 @@ async function bumpSemver(
 
   const hasVPrefix = currentVersion.startsWith('v');
 
-  const bumpedVersion = semver.inc(currentVersion, bumpLevel as semver.ReleaseType);
+  let bumpedVersion: string;
+  if (preID) {
+    bumpedVersion = semver.inc(currentVersion, bumpLevel, preID) as string;
+  } else {
+    bumpedVersion = semver.inc(currentVersion, bumpLevel) as string;
+  }
 
   let newVersion = bumpedVersion;
   if (hasVPrefix) {
@@ -47,15 +61,7 @@ async function bumpSemver(
 }
 
 function isReleaseType(s: string): s is semver.ReleaseType {
-  return [
-    'major',
-    'premajor',
-    'minor',
-    'preminor',
-    'patch',
-    'prepatch',
-    'prerelease'
-  ].includes(s);
+  return ['major', 'premajor', 'minor', 'preminor', 'patch', 'prepatch', 'prerelease'].includes(s);
 }
 
 run();
