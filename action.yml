@@ -9,11 +9,14 @@ inputs:
     description: A semver update level ({major, premajor, minor, preminor, patch, prepatch, prerelease}).
     required: false
     default: minor
+  preID:
+    description: A semver prerelease ID.
+    required: false
 outputs:
   new_version:
     description: The bumped semver version.
 runs:
-  using: node12
+  using: node16
   main: dist/index.js
 branding:
   icon: bookmark
