@@ -3,21 +3,36 @@ import * as semver from 'semver';
 
 async function run(): Promise<void> {
   try {
-    const currentVersion = core.getInput('current_version');
-    const bumpLevel = core.getInput('level');
+    const currentVersion = core.getInput('current_version') as string;
+    const bumpLevel = core.getInput('level') as semver.ReleaseType;
+    const preID = core.getInput('preID') as string;
 
-    const newVersion = await bumpSemver(currentVersion, bumpLevel);
-    core.setOutput('new_version', newVersion);
+    let newVersion;
+
+    if (preID) {
+      newVersion = await bumpSemver(currentVersion, bumpLevel, preID);
+    } else {
+      newVersion = await bumpSemver(currentVersion, bumpLevel);
+    }
+
+    if (newVersion) {
+      core.setOutput('new_version', newVersion);
+    } else {
+      core.setFailed('Failed to bump the version.');
+    }
   } catch (e) {
-    core.error(e);
-    core.setFailed(e.message);
+    if (e instanceof Error) {
+      core.error(e);
+      core.setFailed(e.message);
+    }
   }
 }
 
 async function bumpSemver(
   currentVersion: string,
-  bumpLevel: string
-): Promise<string | null> {
+  bumpLevel: semver.ReleaseType,
+  preID?: string
+): Promise<string> {
   if (!semver.valid(currentVersion)) {
     throw new Error(`${currentVersion} is not a valid semver`);
   }
@@ -28,11 +43,14 @@ async function bumpSemver(
     );
   }
 
-  // https://semver.org/#is-v123-a-semantic-version
-  // If the current version has 'v' prefix (e.g., v1.2.3), keep the prefix in the new version too.
   const hasVPrefix = currentVersion.startsWith('v');
 
-  const bumpedVersion = semver.inc(currentVersion, bumpLevel);
+  let bumpedVersion: string;
+  if (preID) {
+    bumpedVersion = semver.inc(currentVersion, bumpLevel, preID) as string;
+  } else {
+    bumpedVersion = semver.inc(currentVersion, bumpLevel) as string;
+  }
 
   let newVersion = bumpedVersion;
   if (hasVPrefix) {
@@ -43,15 +61,7 @@ async function bumpSemver(
 }
 
 function isReleaseType(s: string): s is semver.ReleaseType {
-  return [
-    'major',
-    'premajor',
-    'minor',
-    'preminor',
-    'patch',
-    'prepatch',
-    'prerelease'
-  ].includes(s);
+  return ['major', 'premajor', 'minor', 'preminor', 'patch', 'prepatch', 'prerelease'].includes(s);
 }
 
 run();
